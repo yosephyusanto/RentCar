@@ -1,14 +1,29 @@
 import { baseApi } from "../constant";
-import type { MsCarCardResponse, MsCarRequest } from "../interfaces";
+import type {
+  MsCarCardResponse,
+  MsCarRequest,
+  MsCarResponse,
+} from "../interfaces";
 import axios from "axios";
 
-export const HomeService = async (): Promise<MsCarCardResponse[]> => {
+export const GetCarCardService = async (): Promise<MsCarCardResponse[]> => {
   try {
     const response = await axios.get(baseApi + "/MsCar");
 
     console.log("Response status:", response.status);
     console.log("Response headers:", response.headers);
 
+    return response.data.data;
+  } catch (e: any) {
+    throw new Error(
+      e.response?.data?.message || "Something went wrong when getting the data"
+    );
+  }
+};
+
+export const GetCarDetail = async (carId: string): Promise<MsCarResponse> => {
+  try {
+    const response = await axios.get(baseApi + `/MsCar/${carId}`);
     return response.data.data;
   } catch (e: any) {
     throw new Error(

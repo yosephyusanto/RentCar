@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const NavigationBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
   return (
     <nav className="fixed top-0 left-0 right-0 w-full h-16 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm z-50">
       <div className="md:max-w-7xl lg:max-w-screen-2xl mx-auto px-10 sm:px-8 md:px-6 lg:px4 xl:px-0">
@@ -61,19 +62,29 @@ const NavigationBar = () => {
 
           {/* Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-4 ">
-            <button className="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-200 cursor-pointer">
+            <Link
+              to="/login"
+              className="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-200 cursor-pointer"
+            >
               Login
-            </button>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer">
+            </Link>
+            <Link
+              to="/register"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
+            >
               Register
-            </button>
+            </Link>
           </div>
 
           {/* Hamburger Icon */}
           <div className="lg:hidden">
             <i
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`bx ${isMenuOpen ? "bx-x" : "bx-menu"} text-5xl cursor-pointer hover:text-blue-700 transition-colors duration-300 transform ${isMenuOpen ? "rotate-180" : "rotate-0"} transition-transform duration-300 ease-in-out`}
+              className={`bx ${
+                isMenuOpen ? "bx-x" : "bx-menu"
+              } text-5xl cursor-pointer hover:text-blue-700 transition-colors duration-300 transform ${
+                isMenuOpen ? "rotate-180" : "rotate-0"
+              } transition-transform duration-300 ease-in-out`}
             ></i>
           </div>
 
@@ -97,14 +108,20 @@ const NavigationBar = () => {
               Upload
             </li>
             <div className="text-center p-4">
-              <button className="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-200 cursor-pointer">
+              <Link
+                to="/login"
+                className="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-200 cursor-pointer"
+              >
                 Login
-              </button>
+              </Link>
             </div>
             <div className="text-center p-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer">
+              <Link
+                to="/register"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
+              >
                 Register
-              </button>
+              </Link>
             </div>
           </div>
         </div>

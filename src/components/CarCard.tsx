@@ -1,15 +1,22 @@
 import type { MsCarCardResponse } from "../interfaces";
 import { baseImageApi } from "../constant";
 import NoImage from "../assets/no_image.jpg";
+import { useState } from "react";
+import CarDetail from "./CarDetail";
 
 type CarCardProps = {
   data: MsCarCardResponse;
 };
 
 const CarCard = ({ data }: CarCardProps) => {
+  const [showModal, setShowModal] = useState<boolean>(false);
   const imageUrl = data.imageLink ? baseImageApi + data.imageLink : null;
   const formatPrice = (price : number) => {
     return price.toLocaleString('id-ID');
+  }
+
+  const handleModal = () => {
+    setShowModal(!showModal);
   }
 
   return (
@@ -37,13 +44,16 @@ const CarCard = ({ data }: CarCardProps) => {
 
       {/* Button Section */}
       <div className="p-4 pt-0">
-        <button className="w-full py-2 text-white font-semibold bg-blue-600 rounded-xl transition-all duration-300 hover:bg-blue-700 transform hover:scale-105">
+        <button onClick={handleModal} className="w-full py-2 text-white font-semibold bg-blue-600 rounded-xl transition-all duration-300 hover:bg-blue-700 transform hover:scale-105">
           <span className="flex justify-center items-center">
             {/* <span className="mr-2">🚗</span> */}
-            Sewa
+            Detail
           </span>
         </button>
       </div>
+
+      {/* Card Detail Modal */}
+      {showModal && <CarDetail formatPrice={formatPrice} onClose={handleModal} carId={data.car_id}/>}
     </div>
   );
 };
