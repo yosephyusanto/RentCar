@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import type { RegisterRequest } from "../interfaces/auth";
-import { register } from "../services/auth";
-import { toast } from "sonner";
+import { Link, useNavigate } from "react-router-dom";
+import type { AssignRoleRequest, RegisterRequest } from "../interfaces/auth";
+import { assignRole, registerApi } from "../services/auth";
+import { toast, Toaster } from "sonner";
+import { FaSpinner } from "react-icons/fa6";
 
 const RegisterPage = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
   const [data, setData] = useState<RegisterRequest>({
     email: "",
     password: "",
@@ -83,15 +86,29 @@ const RegisterPage = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     // Validate before proceeding
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const response: string = await register(data);
-      toast.success(response); // Assuming register() returns a success message
+      const response: string = await registerApi(data);
+      // Semua akun register sebagai customer, untuk sebagai employee diset manual di db
+      const request: AssignRoleRequest = {
+        email: data.email,
+        role: "customer",
+      };
+      const message: string = await assignRole(request);
+      console.log(message);
+      toast.success(response); // registerApi return string pesan success
+      navigate("/login");
     } catch (e: any) {
       toast.error(e.message || "Something went wrong when sending the data");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -202,7 +219,14 @@ const RegisterPage = () => {
               type="submit"
               className="w-full text-white font-semibold bg-blue-600 px-4 py-3 rounded-md hover:bg-blue-800 transition-colors duration-200 cursor-pointer"
             >
-              Register
+              {isLoading ? (
+                <div className="flex justify-center items-center">
+                  <FaSpinner className="animate-spin mr-2" />
+                  Loading...
+                </div>
+              ) : (
+                "Register"
+              )}
             </button>
           </div>
 
@@ -215,6 +239,7 @@ const RegisterPage = () => {
           </div>
         </form>
       </div>
+   
     </div>
   );
 };

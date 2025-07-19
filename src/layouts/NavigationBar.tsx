@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const NavigationBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const { user, logout } = useAuth();
+
+  const role =
+    user?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  const fullName = user?.FullName;
+  const email = user?.sub;
 
   return (
     <nav className="fixed top-0 left-0 right-0 w-full h-16 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm z-50">
@@ -48,33 +55,47 @@ const NavigationBar = () => {
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/employee/upload"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
-                >
-                  Upload
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </Link>
-              </li>
+              {role === "employee" && (
+                <li>
+                  <Link
+                    to="/employee/upload"
+                    className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+                  >
+                    Upload
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 
           {/* Auth Buttons */}
-          <div className="hidden lg:flex items-center space-x-4 ">
-            <Link
-              to="/login"
-              className="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-200 cursor-pointer"
-            >
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
-            >
-              Register
-            </Link>
-          </div>
+          {user ? (
+            <div className="hidden lg:flex items-center space-x-4">
+              <span className=" font-medium">Hi, {fullName}</span>
+              <button
+                onClick={logout}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-all cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center space-x-4">
+              <Link
+                to="/login"
+                className="text-gray-700 hover:text-blue-600 font-semibold"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+              >
+                Register
+              </Link>
+            </div>
+          )}
 
           {/* Hamburger Icon */}
           <div className="lg:hidden">
@@ -104,25 +125,44 @@ const NavigationBar = () => {
             <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
               Contact
             </li>
-            <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
-              Upload
-            </li>
-            <div className="text-center p-4">
-              <Link
-                to="/login"
-                className="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-200 cursor-pointer"
-              >
-                Login
-              </Link>
-            </div>
-            <div className="text-center p-4">
-              <Link
-                to="/register"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
-              >
-                Register
-              </Link>
-            </div>
+
+            {role === "employee" && (
+              <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
+                Upload
+              </li>
+            )}
+
+            {!user && (
+              <>
+                <div className="text-center p-4">
+                  <Link
+                    to="/login"
+                    className="text-gray-700 hover:text-blue-600 font-semibold transition-colors duration-200 cursor-pointer"
+                  >
+                    Login
+                  </Link>
+                </div>
+                <div className="text-center p-4">
+                  <Link
+                    to="/register"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 cursor-pointer"
+                  >
+                    Register
+                  </Link>
+                </div>
+              </>
+            )}
+
+            {user && (
+              <div className="text-center p-4">
+                <button
+                  onClick={logout}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-all cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

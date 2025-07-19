@@ -7,23 +7,28 @@ import HistoryPage from "./pages/HistoryPage";
 import ContactPage from "./pages/ContactPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import { AuthProvider } from "./contexts/AuthContext";
+import { Toaster } from "sonner";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="history" element={<HistoryPage />} />
-          <Route path="contact" element={<ContactPage />} />
-          <Route path="employee/">
-            <Route path="upload" element={<UploadCarPage />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Toaster richColors/>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<HomePage />} />
+            <Route path="history" element={<HistoryPage />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="employee/">
+              <Route path="upload" element={<UploadCarPage />} />
+            </Route>
           </Route>
-        </Route>
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import type {
-  AssignRoleRequest,
-  LoginRequest,
-  LoginResponse,
-} from "../interfaces/auth";
-import { assignRole, login } from "../services/auth";
-import { toast } from "sonner";
+import { Link, useNavigate } from "react-router-dom";
+import type { LoginRequest, LoginResponse } from "../interfaces/auth";
+import { loginApi } from "../services/auth";
+import { toast, Toaster } from "sonner";
+import { FaSpinner } from "react-icons/fa6";
+import { useAuth } from "../hooks/useAuth";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<LoginRequest>({
     email: "",
     password: "",
@@ -42,17 +43,24 @@ const LoginPage = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const response: LoginResponse = await login(data);
-      localStorage.setItem("token", response.token);
-      const temp: AssignRoleRequest = { email: data.email, role: "customer" };
-      const message: string = await assignRole(temp);
-      console.log(message);
+      const response: LoginResponse = await loginApi(data);
+      login(response.token);
+      toast.success("Login successful");
+      navigate("/");
+      console.log("Navigation called");
     } catch (e: any) {
+      console.log("e message: ", e.message);
       toast.error(e.message || "Something went wrong when sending the data");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -77,7 +85,7 @@ const LoginPage = () => {
           <div className="flex flex-col">
             <label htmlFor="password">Password</label>
             <input
-              type="text"
+              type="password"
               name="password"
               onChange={handleChange}
               className="border border-gray-300 focus:outline-none focus:ring-0 rounded-lg px-4 py-3  focus:border-blue-500 focus:border-2 transition-all duration-200 placeholder-gray-400"
@@ -91,7 +99,14 @@ const LoginPage = () => {
               type="submit"
               className="w-full bg-blue-600 px-4 py-3 rounded-md font-semibold text-white hover:bg-blue-800 transition-colors duration-200 cursor-pointer"
             >
-              Login
+              {isLoading ? (
+                <div className="flex justify-center items-center">
+                  <FaSpinner className="animate-spin mr-2" />
+                  Loading...
+                </div>
+              ) : (
+                "Login"
+              )}
             </button>
           </div>
           <div>

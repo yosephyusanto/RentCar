@@ -261,7 +261,7 @@ const UploadCarPage = () => {
         </div>
       </div>
 
-      <Toaster richColors />
+     
     </>
   );
 };
