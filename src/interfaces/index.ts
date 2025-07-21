@@ -1,3 +1,10 @@
+export interface MsCarCardPaginatedResponse{
+  data : MsCarCardResponse[];
+  totalItems : number;
+  totalPages : number;
+  currentPage : number;
+}
+
 export interface MsCarCardResponse {
   car_id: string;
   name: string;

@@ -1,20 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { LoginRequest, LoginResponse } from "../interfaces/auth";
 import { loginApi } from "../services/auth";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { FaSpinner } from "react-icons/fa6";
 import { useAuth } from "../hooks/useAuth";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<LoginRequest>({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState({ email: "", password: "" });
+
+  useEffect(() => {
+    if (user) {
+      const role =
+        user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      console.log("role dari token:", role);
+
+      if (role === "employee") {
+        navigate("/employee/manage-cars");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [user, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -54,8 +68,6 @@ const LoginPage = () => {
       const response: LoginResponse = await loginApi(data);
       login(response.token);
       toast.success("Login successful");
-      navigate("/");
-      console.log("Navigation called");
     } catch (e: any) {
       console.log("e message: ", e.message);
       toast.error(e.message || "Something went wrong when sending the data");
@@ -97,6 +109,7 @@ const LoginPage = () => {
           <div>
             <button
               type="submit"
+              disabled={isLoading}
               className="w-full bg-blue-600 px-4 py-3 rounded-md font-semibold text-white hover:bg-blue-800 transition-colors duration-200 cursor-pointer"
             >
               {isLoading ? (

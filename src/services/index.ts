@@ -1,19 +1,35 @@
 import { baseApi } from "../constant";
 import type {
-  MsCarCardResponse,
+  MsCarCardPaginatedResponse,
   MsCarRequest,
   MsCarResponse,
 } from "../interfaces";
 import axios from "axios";
 
-export const GetCarCardService = async (): Promise<MsCarCardResponse[]> => {
+export const GetCarCardService = async (
+  page: number,
+  order?: string
+): Promise<MsCarCardPaginatedResponse> => {
   try {
-    const response = await axios.get(baseApi + "/MsCar");
+    let url = `${baseApi}/MsCar?page=${page}`;
 
+    // Add sorting parameter if provided
+    if (order && (order === "asc" || order === "desc")) {
+      url += `&order=${order}`;
+    }
+
+    const response = await axios.get(url);
+
+    console.log("Response data: ", response.data);
     console.log("Response status:", response.status);
     console.log("Response headers:", response.headers);
 
-    return response.data.data;
+    return {
+      data: response.data.data,
+      totalItems: response.data.totalItems,
+      totalPages: response.data.totalPages,
+      currentPage: response.data.currentPage,
+    };
   } catch (e: any) {
     throw new Error(
       e.response?.data?.message || "Something went wrong when getting the data"
@@ -34,9 +50,11 @@ export const GetCarDetail = async (carId: string): Promise<MsCarResponse> => {
 
 export const UploadCarInformationService = async (carData: MsCarRequest) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.post(baseApi + "/MsCar", carData, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -59,12 +77,15 @@ export const UploadCarImagesService = async (carId: string, files: File[]) => {
       formData.append("files", file);
     });
 
+    const token = localStorage.getItem("token");
+
     const response = await axios.post(
       baseApi + `/upload-images/${carId}`,
       formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       }
     );

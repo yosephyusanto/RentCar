@@ -217,6 +217,7 @@ const RegisterPage = () => {
           <div>
             <button
               type="submit"
+              disabled={isLoading}
               className="w-full text-white font-semibold bg-blue-600 px-4 py-3 rounded-md hover:bg-blue-800 transition-colors duration-200 cursor-pointer"
             >
               {isLoading ? (
@@ -239,7 +240,6 @@ const RegisterPage = () => {
           </div>
         </form>
       </div>
-   
     </div>
   );
 };

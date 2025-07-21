@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 const NavigationBar = () => {
@@ -9,7 +9,7 @@ const NavigationBar = () => {
   const role =
     user?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
   const fullName = user?.FullName;
-  const email = user?.sub;
+  // const email = user?.sub;
 
   return (
     <nav className="fixed top-0 left-0 right-0 w-full h-16 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm z-50">
@@ -28,33 +28,39 @@ const NavigationBar = () => {
           {/* Navigation Links */}
           <div className="hidden lg:block">
             <ul className="flex items-center space-x-8">
-              <li>
-                <Link
-                  to="/"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
-                >
-                  Home
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/history"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
-                >
-                  History
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/contact"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
-                >
-                  Contact
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                </Link>
-              </li>
+              {role === "customer" && (
+                <>
+                  {" "}
+                  <li>
+                    <Link
+                      to="/"
+                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+                    >
+                      Home
+                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/history"
+                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+                    >
+                      History
+                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/contact"
+                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+                    >
+                      Contact
+                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+                    </Link>
+                  </li>
+                </>
+              )}
+
               {role === "employee" && (
                 <li>
                   <Link
@@ -116,15 +122,20 @@ const NavigationBar = () => {
             }`}
             style={{ transition: "transform 0.3s ease, opacity 0.3 ease" }}
           >
-            <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
-              Home
-            </li>
-            <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
-              History
-            </li>
-            <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
-              Contact
-            </li>
+            {role === "customer" && (
+              <>
+                {" "}
+                <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
+                  Home
+                </li>
+                <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
+                  History
+                </li>
+                <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
+                  Contact
+                </li>
+              </>
+            )}
 
             {role === "employee" && (
               <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
