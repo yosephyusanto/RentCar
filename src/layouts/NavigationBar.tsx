@@ -62,15 +62,26 @@ const NavigationBar = () => {
               )}
 
               {role === "employee" && (
-                <li>
-                  <Link
-                    to="/employee/upload"
-                    className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
-                  >
-                    Upload
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-                  </Link>
-                </li>
+                <>
+                  <li>
+                    <Link
+                      to="/employee/manage-cars"
+                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+                    >
+                      Manage
+                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/employee/upload"
+                      className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+                    >
+                      Upload
+                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+                    </Link>
+                  </li>
+                </>
               )}
             </ul>
           </div>
@@ -138,9 +149,14 @@ const NavigationBar = () => {
             )}
 
             {role === "employee" && (
-              <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
-                Upload
-              </li>
+              <>
+                <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
+                  <Link to="/employee/manage-cars">Manage</Link>
+                </li>
+                <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
+                  <Link to="/employee/upload">Upload</Link>
+                </li>
+              </>
             )}
 
             {!user && (

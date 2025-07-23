@@ -1,6 +1,7 @@
 import { baseApi } from "../constant";
 import type {
   MsCarCardPaginatedResponse,
+  MsCarPaginatedResponse,
   MsCarRequest,
   MsCarResponse,
 } from "../interfaces";
@@ -41,6 +42,28 @@ export const GetCarDetail = async (carId: string): Promise<MsCarResponse> => {
   try {
     const response = await axios.get(baseApi + `/MsCar/${carId}`);
     return response.data.data;
+  } catch (e: any) {
+    throw new Error(
+      e.response?.data?.message || "Something went wrong when getting the data"
+    );
+  }
+};
+
+export const GetManageCarData = async (): Promise<MsCarPaginatedResponse> => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(baseApi + "/MsCar/GetAllCompleteCarData", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return {
+      data: response.data.data,
+      totalItems: response.data.totalItems,
+      totalPages: response.data.totalPages,
+      currentPage: response.data.currentPage,
+    };
   } catch (e: any) {
     throw new Error(
       e.response?.data?.message || "Something went wrong when getting the data"
@@ -94,6 +117,24 @@ export const UploadCarImagesService = async (carId: string, files: File[]) => {
   } catch (e: any) {
     throw new Error(
       e.response?.data?.message || "Something went wrong when sending the data"
+    );
+  }
+};
+
+export const deleteCar = async (carId: string) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.delete(baseApi + `/MsCar/${carId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (e: any) {
+    throw new Error(
+      e.response?.data?.message ||
+        "Something went wrong when trying to delete data"
     );
   }
 };

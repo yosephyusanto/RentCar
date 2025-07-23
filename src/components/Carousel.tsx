@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 type CarouselProps = {
   children: React.ReactNode[];
   isThereImage: boolean;
+  autoSlide : boolean;
 };
 
 const Carousel = (
   { children, isThereImage }: CarouselProps,
-  autoSlide = true,
+  autoSlide = false,
   autoSlideInterval = 3000
 ) => {
   const [curr, setCurr] = useState<number>(0);

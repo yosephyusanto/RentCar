@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { MsCarRequest } from "../interfaces";
 import { UploadCarInformationService } from "../services";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 const UploadCarPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -9,10 +9,10 @@ const UploadCarPage = () => {
     name: "",
     model: "",
     year: 2025,
-    licensePlate: "",
-    numberOfSeats: "",
+    license_plate: "",
+    number_of_car_seats: 0,
     transmission: "",
-    pricePerDay: 500000,
+    price_per_day: 500000,
   });
 
   useEffect(() => {
@@ -20,10 +20,10 @@ const UploadCarPage = () => {
       name: "",
       model: "",
       year: 2025,
-      licensePlate: "",
-      numberOfSeats: "",
+      license_plate: "",
+      number_of_car_seats: 0,
       transmission: "",
-      pricePerDay: 500000,
+      price_per_day: 500000,
     });
   }, []);
 
@@ -39,10 +39,10 @@ const UploadCarPage = () => {
       !data.name ||
       !data.model ||
       !data.year ||
-      !data.licensePlate ||
-      !data.numberOfSeats ||
+      !data.license_plate ||
+      !data.number_of_car_seats ||
       !data.transmission ||
-      !data.pricePerDay
+      !data.price_per_day
     )
       return false;
     else return true;
@@ -51,12 +51,14 @@ const UploadCarPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log("JALAANSNANBSKN");
+
     if (!validate(carData)) return;
 
     setIsLoading(true);
     try {
       const response: string = await UploadCarInformationService(carData);
-      console.log("car data:", carData)
+      console.log("car data:", carData);
       toast.success(response);
     } catch (e: any) {
       toast.error(e.message || "Something went wrong when sending the data");
@@ -138,8 +140,8 @@ const UploadCarPage = () => {
                   </label>
                   <input
                     type="number"
-                    name="numberOfSeats"
-                    value={carData.numberOfSeats}
+                    name="number_of_car_seats"
+                    value={carData.number_of_car_seats}
                     onChange={handleChange}
                     min="2"
                     max="50"
@@ -157,8 +159,8 @@ const UploadCarPage = () => {
                 </label>
                 <input
                   type="text"
-                  name="licensePlate"
-                  value={carData.licensePlate}
+                  name="license_plate"
+                  value={carData.license_plate}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 uppercase"
                   placeholder="e.g., ABC-1234"
@@ -195,8 +197,8 @@ const UploadCarPage = () => {
                   </span>
                   <input
                     type="number"
-                    name="pricePerDay"
-                    value={carData.pricePerDay}
+                    name="price_per_day"
+                    value={carData.price_per_day}
                     onChange={handleChange}
                     min="0"
                     className="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
@@ -260,8 +262,6 @@ const UploadCarPage = () => {
           </div>
         </div>
       </div>
-
-     
     </>
   );
 };

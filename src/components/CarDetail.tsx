@@ -58,11 +58,15 @@ const CarDetail = ({ carId, onClose, formatPrice }: CarDetailProps) => {
         ></i>
         {/* White Modal box */}
         <div className="bg-white rounded-lg sm:rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-4xl lg:max-w-6xl max-h-[90vh] overflow-hidden relative animate-modal-appear">
+          {error && <div className="text-red-500 text-center p-4">{error}</div>}
           <div className="flex flex-col md:flex-row">
             {/* Image Section */}
             <div className="md:w-4/6 lg:w-3/5 bg-gray-50">
               <div className="w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[600px]">
-                <Carousel isThereImage={slides.length < 1 ? false : true}>
+                <Carousel
+                  isThereImage={slides.length < 1 ? false : true}
+                  autoSlide={true}
+                >
                   {slides.length > 0
                     ? slides.map((slide, idx) => (
                         <img
