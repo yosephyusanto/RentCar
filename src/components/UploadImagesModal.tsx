@@ -4,11 +4,12 @@ import { toast } from "sonner";
 import ReactDOM from "react-dom";
 
 type UploadImagesModalProps = {
-  carId: string;
   onClose: () => void;
+  onFetchData: () => void;
 };
 
-const UploadImagesModal = ({ carId, onClose }: UploadImagesModalProps) => {
+const UploadImagesModal = ({ onClose, onFetchData }: UploadImagesModalProps) => {
+  const [carId, setCarId] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -25,15 +26,27 @@ const UploadImagesModal = ({ carId, onClose }: UploadImagesModalProps) => {
     }
   };
 
+  const handleCarIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCarId(e.target.value);
+  };
+
   const handleRemoveImage = (index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleUpload = async () => {
-    if (files.length === 0) return;
+    if (!carId) {
+      toast.error("Please enter a valid Car ID");
+      return;
+    }
+    if (files.length === 0){
+      toast.error("Please select at least one image to upload");
+      return;
+    }
     try {
       await UploadCarImagesService(carId, files);
       setFiles([]);
+      onFetchData();
     } catch (e: any) {
       toast.error(e.message || "Something went wrong when sending the data");
     }
@@ -61,6 +74,17 @@ const UploadImagesModal = ({ carId, onClose }: UploadImagesModalProps) => {
         <h2 className="text-xl font-bold mb-4 text-center">
           Upload Car Images
         </h2>
+        {/* Input Car id */}
+        <div className="flex items-center mb-8 gap-x-2">
+          <label htmlFor="">CarId: </label>
+          <input
+            type="text"
+            value={carId}
+            onChange={handleCarIdChange}
+            className="w-full border border-gray-300 focus:outline-none focus:ring-0 rounded-lg px-4 py-3  focus:border-blue-500 focus:border-2 transition-all duration-200 placeholder-gray-400"
+            placeholder="CARXXX"
+          />
+        </div>
 
         {files.length === 0 ? (
           <div
@@ -82,20 +106,23 @@ const UploadImagesModal = ({ carId, onClose }: UploadImagesModalProps) => {
         ) : (
           <div className="grid grid-cols-3 gap-4 mb-4">
             {files.map((file, index) => (
-              <div key={index} className="relative group">
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt={`preview-${index}`}
-                  className="w-full h-32 object-cover rounded"
-                />
-                <button
-                  onClick={() => handleRemoveImage(index)}
-                  className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full px-2 py-0 text-xs hidden group-hover:block"
-                >
-                  Hapus
-                </button>
-              </div>
+              <>
+                <div key={index} className="relative group">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`preview-${index}`}
+                    className="w-full h-32 object-cover rounded"
+                  />
+
+                  <i
+                    onClick={() => handleRemoveImage(index)}
+                    className="bx bx-x text-2xl text-white  rounded-full absolute top-1 right-1 bg-black/50 cursor-pointer"
+                  ></i>
+                </div>
+              </>
             ))}
+            {/* add more picture */}
+            <div>halo</div>
           </div>
         )}
 
@@ -109,7 +136,9 @@ const UploadImagesModal = ({ carId, onClose }: UploadImagesModalProps) => {
           <button
             onClick={handleUpload}
             disabled={files.length === 0}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md disabled:opacity-50 cursor-pointer"
+            className={`px-4 py-2 bg-blue-600 text-white rounded-md disabled:opacity-50 ${
+              files.length && "cursor-pointer"
+            }`}
           >
             Upload
           </button>

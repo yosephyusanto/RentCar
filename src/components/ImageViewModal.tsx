@@ -38,12 +38,6 @@ const ImageViewModal = ({
           <h3 className="text-xl font-semibold text-gray-900">
             {carName} - Images ({images.length})
           </h3>
-          {/* <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
-          >
-            ×
-          </button> */}
            <i
         className="bx bx-x  text-gray-600 text-4xl cursor-pointer"
         onClick={onClose}

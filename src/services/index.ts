@@ -95,7 +95,6 @@ export const UploadCarInformationService = async (carData: MsCarRequest) => {
 export const UploadCarImagesService = async (carId: string, files: File[]) => {
   try {
     const formData = new FormData();
-    formData.append("carId", carId);
     files.forEach((file) => {
       formData.append("files", file);
     });
@@ -103,7 +102,7 @@ export const UploadCarImagesService = async (carId: string, files: File[]) => {
     const token = localStorage.getItem("token");
 
     const response = await axios.post(
-      baseApi + `/upload-images/${carId}`,
+      baseApi + `/MsCar/upload-images/${carId}`,
       formData,
       {
         headers: {
@@ -112,6 +111,8 @@ export const UploadCarImagesService = async (carId: string, files: File[]) => {
         },
       }
     );
+
+    console.log("Upload images response.data: ", response.data);
 
     return response.data.data;
   } catch (e: any) {
@@ -130,7 +131,10 @@ export const deleteCar = async (carId: string) => {
       },
     });
 
-    return response.data;
+    console.log("Response status code: ", response.status);
+    console.log("DeleteCar response.data : ", response.data);
+
+    return response.data.data;
   } catch (e: any) {
     throw new Error(
       e.response?.data?.message ||

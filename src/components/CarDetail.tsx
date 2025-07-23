@@ -69,15 +69,19 @@ const CarDetail = ({ carId, onClose, formatPrice }: CarDetailProps) => {
                 >
                   {slides.length > 0
                     ? slides.map((slide, idx) => (
-                        <img
-                          key={idx}
-                          src={slide}
-                          alt={`Car image ${idx + 1}`}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.src = NoImage;
-                          }}
-                        />
+                        <div 
+                         key={idx}
+                        className="min-w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[600px]">
+                          <img
+                            key={idx}
+                            src={slide}
+                            alt={`Car image ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = NoImage;
+                            }}
+                          />
+                        </div>
                       ))
                     : [
                         <img
