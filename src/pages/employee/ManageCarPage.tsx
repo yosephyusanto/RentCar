@@ -12,10 +12,10 @@ import ImageViewModal from "@/components/ImageViewModal";
 import { baseImageApi } from "@/constant";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import DeleteConfirmModal from "@/components/DeleteConfirmModal";
 
 const ManageCarPage = () => {
   const [data, setData] = useState<MsCarResponse[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [showUploadImagesModal, setShowUploadImagesModal] =
     useState<boolean>(false);
   const navigate = useNavigate();
@@ -23,6 +23,13 @@ const ManageCarPage = () => {
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [selectedImages, setSelectedImages] = useState<MsCarImages[]>([]);
   const [selectedCarName, setSelectedCarName] = useState<string>("");
+  // state untuk delete confirmation modal
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [carToDelete, setCarToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   useEffect(() => {
     fetchData();
@@ -60,22 +67,56 @@ const ManageCarPage = () => {
     setSelectedCarName("");
   };
 
-  const handleDeleteCar = async (carId: string) => {
+  // show delete confirmation modal
+  const handleDeleteRequest = (carId: string) => {
+    const car = data.find((c) => c.car_id === carId);
+    if (car) {
+      setCarToDelete({ id: carId, name: car.name });
+      setShowDeleteModal(true);
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (isDeleting) return; // Prevent closing while deleting
+    setShowDeleteModal(false);
+    setCarToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!carToDelete) return;
+
     try {
-      const response: string = await deleteCar(carId);
-      await fetchData();
-      toast.success(response);
+      setIsDeleting(true);
+      const response: string = await deleteCar(carToDelete.id);
+
+      // Update local state immediately for better UX
+      setData((prevData) =>
+        prevData.filter((car) => car.car_id !== carToDelete.id)
+      );
+
+      toast.success(
+        response || `${carToDelete.name} has been deleted successfully`
+      );
+
+      // Close modal
+      setShowDeleteModal(false);
+      setCarToDelete(null);
     } catch (e: any) {
-      console.log("delete car error kah");
+      console.error("Delete car error:", e);
       toast.error(
         e.message || "Something went wrong when trying to delete car"
       );
+
+      // Refresh data to ensure UI is in sync if delete failed
+      await fetchData();
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const manageMsCarColumns = createManageMsCarColumns({
     onOpenImageModal: handleOpenImageModal,
-    onDeleteRow: handleDeleteCar,
+    onDeleteRequest: handleDeleteRequest,
   });
 
   return (
@@ -110,6 +151,16 @@ const ManageCarPage = () => {
         isOpen={showImageModal}
         isAutoSlide={false}
         onClose={handleCloseImageModal}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        open={showDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        carName={carToDelete?.name || ""}
+        carId={carToDelete?.id || ""}
+        isLoading={isDeleting}
       />
 
       {/* Table */}

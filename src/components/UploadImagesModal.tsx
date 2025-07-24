@@ -8,7 +8,10 @@ type UploadImagesModalProps = {
   onFetchData: () => void;
 };
 
-const UploadImagesModal = ({ onClose, onFetchData }: UploadImagesModalProps) => {
+const UploadImagesModal = ({
+  onClose,
+  onFetchData,
+}: UploadImagesModalProps) => {
   const [carId, setCarId] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +42,7 @@ const UploadImagesModal = ({ onClose, onFetchData }: UploadImagesModalProps) => 
       toast.error("Please enter a valid Car ID");
       return;
     }
-    if (files.length === 0){
+    if (files.length === 0) {
       toast.error("Please select at least one image to upload");
       return;
     }
@@ -129,7 +132,7 @@ const UploadImagesModal = ({ onClose, onFetchData }: UploadImagesModalProps) => 
         <div className="flex justify-end gap-3 mt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md cursor-pointer"
+            className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 font-medium cursor-pointer"
           >
             Cancel
           </button>

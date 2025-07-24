@@ -5,12 +5,12 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 export interface ManageMsCarColumnsProp {
   onOpenImageModal: (images: MsCarImages[], carName: string) => void;
-  onDeleteRow: (carId: string) => void;
+  onDeleteRequest: (carId: string) => void; // ✅ Changed from onConfirmDelete to onDeleteRequest
 }
 
 export const createManageMsCarColumns = ({
   onOpenImageModal,
-  onDeleteRow,
+  onDeleteRequest,
 }: ManageMsCarColumnsProp): ColumnDef<MsCarResponse>[] => [
   {
     accessorKey: "car_id",
@@ -94,13 +94,14 @@ export const createManageMsCarColumns = ({
     header: "Actions",
     cell: ({ row }) => {
       const carId = row.getValue("car_id") as string;
+
       return (
         <div className="flex items-center gap-x-2">
           <button className="px-3 py-2 bg-amber-500 text-white rounded-md cursor-pointer transition-colors hover:bg-amber-800">
             Edit
           </button>
           <button
-            onClick={() => onDeleteRow(carId)}
+            onClick={() => onDeleteRequest(carId)}
             className="px-3 py-2 bg-red-500 text-white rounded-md cursor-pointer transition-colors hover:bg-red-800"
           >
             Delete
