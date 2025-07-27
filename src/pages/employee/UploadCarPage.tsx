@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import type { MsCarRequest } from "../interfaces";
-import { UploadCarInformationService } from "../services";
+import type { MsCarRequest } from "../../interfaces";
+import { UploadCarInformationService } from "../../services";
 import { toast } from "sonner";
 
 const UploadCarPage = () => {
