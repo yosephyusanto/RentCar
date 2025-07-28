@@ -124,8 +124,10 @@ const UploadImagesModal = ({
                 </div>
               </>
             ))}
-            {/* add more picture */}
-            <div>halo</div>
+            {/* add more picture COMING SOON */}
+            <div className="flex items-center justify-center bg-gray-100 cursor-pointer border-blue-500 border-2">
+              <i className='bx bx-plus text-3xl text-blue-500'></i>
+            </div>
           </div>
         )}
 

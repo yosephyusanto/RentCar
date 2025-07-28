@@ -5,23 +5,45 @@ import type {
   MsCarCardResponse,
 } from "../interfaces";
 import CarCard from "../components/CarCard";
+import { toast } from "sonner";
+import { useRental } from "@/contexts/RentalContext";
+
+export interface IFilter {
+  pickupDate: string;
+  returnDate: string;
+  productionYear: number | null;
+}
 
 const HomePage = () => {
   const [paginatedData, setPaginatedData] =
     useState<MsCarCardPaginatedResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [validationErrors, setValidationErrors] = useState<{
+    pickupDate?: string;
+    returnDate?: string;
+  }>({});
+  const [filters, setFilters] = useState<IFilter>({
+    pickupDate: "",
+    returnDate: "",
+    productionYear: null,
+  });
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortOrder, setSortOrder] = useState<string>(""); // asc or desc
+  const [hasSearched, setHasSearched] = useState<boolean>(false);
+  // context untuk dipakai di CarDetail.tsx
+  const { setRentalDates, clearRentalDates } = useRental();
 
   useEffect(() => {
-    fetchCarCardData();
-  }, [currentPage, sortOrder]);
+    if (hasSearched) {
+      fetchCarCardData();
+    }
+  }, [currentPage, sortOrder, hasSearched]);
 
   const fetchCarCardData = async () => {
     setIsLoading(true);
     try {
-      const response = await GetCarCardService(currentPage, sortOrder);
+      const response = await GetCarCardService(filters, currentPage, sortOrder);
       setPaginatedData(response);
       setError(null);
     } catch (e: any) {
@@ -29,6 +51,21 @@ const HomePage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    // Clear validation error when user starts typing
+    if (validationErrors[name as keyof typeof validationErrors]) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+
+    setFilters({ ...filters, [name]: value });
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -40,6 +77,73 @@ const HomePage = () => {
     setCurrentPage(page);
     // Smooth scroll to top
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const validateFilters = (): boolean => {
+    const errors: { pickupDate?: string; returnDate?: string } = {};
+    // Check if pickup date is provided
+    if (!filters.pickupDate) {
+      errors.pickupDate = "Pickup date is required";
+      toast.error("Pickup date is required");
+    }
+
+    // Check if return date is provided
+    if (!filters.returnDate) {
+      errors.returnDate = "Return date is required";
+      toast.error("Return date is required");
+    }
+
+    // Check if return date is after pickup date
+    if (filters.pickupDate && filters.returnDate) {
+      const pickupDate = new Date(filters.pickupDate);
+      const returnDate = new Date(filters.returnDate);
+
+      if (returnDate <= pickupDate) {
+        errors.returnDate = "Return date must be after pickup date";
+        toast.error("Return date must be after pickup date");
+      }
+
+      // Check if pickup date is not in the past
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      pickupDate.setHours(0, 0, 0, 0);
+
+      if (pickupDate < today) {
+        errors.pickupDate = "Pickup date cannot be in the past";
+        toast.error("Pickup date cannot be in the past");
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSearch = () => {
+    if (!validateFilters()) return;
+
+    //update context
+    setRentalDates(filters.pickupDate, filters.returnDate);
+
+    // Reset pagination when searching
+    setCurrentPage(1);
+    setHasSearched(true);
+    setError(null);
+    setPaginatedData(null); // Clear previous results
+
+    // Fetch data
+    fetchCarCardData();
+  };
+
+  const handleClearSearch = () => {
+    clearRentalDates();
+    setFilters({
+      pickupDate: "",
+      returnDate: "",
+      productionYear: null,
+    });
+    setHasSearched(false);
+    setPaginatedData(null);
+    setValidationErrors({});
   };
 
   const renderCards = (card: MsCarCardResponse, index: number) => {
@@ -236,8 +340,8 @@ const HomePage = () => {
                 type="date"
                 id="pickupDate"
                 name="pickupDate"
-                // value={filters.pickupDate}
-                // onChange={handleFilterChange}
+                value={filters.pickupDate}
+                onChange={handleFilterChange}
                 className="w-full px-4 py-3 border-2 border-gray-300 outline-0 rounded-lg focus:border-blue-600 transition-all duration-200 bg-gray-50 hover:bg-white"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -258,8 +362,8 @@ const HomePage = () => {
                 type="date"
                 id="returnDate"
                 name="returnDate"
-                // value={filters.returnDate}
-                // onChange={handleFilterChange}
+                value={filters.returnDate}
+                onChange={handleFilterChange}
                 className="w-full px-4 py-3 border-2 border-gray-300 outline-0 rounded-lg focus:border-blue-600  transition-all duration-200 bg-gray-50 hover:bg-white"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -279,11 +383,14 @@ const HomePage = () => {
               <select
                 id="productionYear"
                 name="productionYear"
-                // value={filters.productionYear}
-                // onChange={handleFilterChange}
+                value={filters.productionYear ?? ""}
+                onChange={handleFilterChange}
+                // multiple
+                // size={3}
                 className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg outline-0 focus:border-blue-500 transition-all duration-200 bg-gray-50 hover:bg-white appearance-none"
               >
                 <option value="">Any Year</option>
+                <option value="2025">2025</option>
                 <option value="2024">2024</option>
                 <option value="2023">2023</option>
                 <option value="2022">2022</option>
@@ -291,6 +398,9 @@ const HomePage = () => {
                 <option value="2020">2020</option>
                 <option value="2019">2019</option>
                 <option value="2018">2018</option>
+                <option value="2017">2017</option>
+                <option value="2016">2016</option>
+                <option value="2015">2015</option>
               </select>
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                 {/* icon */}
@@ -299,7 +409,7 @@ const HomePage = () => {
           </div>
           <div className="flex flex-row sm:justify-end  sm:col-span-2  md:col-span-3 md:justify-end gap-3  lg:col-span-1 lg:justify-start lg:items-end">
             <button
-              // onClick={handleSearch}
+              onClick={handleSearch}
               className="flex-1 sm:flex-none lg:h-[49.33px] bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-8 py-3 rounded-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
             >
               Search Cars
@@ -325,7 +435,7 @@ const HomePage = () => {
         </div>
 
         {/* Cars List with Loading State*/}
-        <div className="min-h-screen flex flex-col">
+        <div className="flex flex-col">
           {isLoading ? (
             <div className="flex flex-1 justify-center items-center py-20">
               <div className="flex flex-col items-center space-y-4">
@@ -380,6 +490,15 @@ const HomePage = () => {
                   </svg>
                 </div>
                 <p className="text-gray-600 font-medium">No cars found</p>
+                <p className="text-gray-600 mb-4">
+                  Try adjusting your search criteria
+                </p>
+                <button
+                  onClick={handleClearSearch}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                >
+                  Clear Search
+                </button>
               </div>
             </div>
           )}

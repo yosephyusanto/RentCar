@@ -26,6 +26,12 @@ export interface MsCarPaginatedResponse {
   currentPage: number;
 }
 
+export interface CarDetailResponse{
+  car : MsCarResponse;
+  totalPrice : number;
+  rentalDays : number;
+}
+
 export interface MsCarResponse {
   car_id: string;
   name: string;

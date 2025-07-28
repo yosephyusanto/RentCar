@@ -1,18 +1,22 @@
+import type { IFilter } from "@/pages/HomePage";
 import { baseApi } from "../constant";
 import type {
+  CarDetailResponse,
   MsCarCardPaginatedResponse,
   MsCarPaginatedResponse,
   MsCarRequest,
-  MsCarResponse,
 } from "../interfaces";
 import axios from "axios";
 
 export const GetCarCardService = async (
+  filters: IFilter,
   page: number,
   order?: string
 ): Promise<MsCarCardPaginatedResponse> => {
   try {
-    let url = `${baseApi}/MsCar?page=${page}`;
+    let url = `${baseApi}/MsCar?pickupDate=${filters.pickupDate}&returnDate=${
+      filters.returnDate
+    }&carYear=${filters.productionYear ?? ""}&page=${page}`;
 
     // Add sorting parameter if provided
     if (order && (order === "asc" || order === "desc")) {
@@ -38,9 +42,18 @@ export const GetCarCardService = async (
   }
 };
 
-export const GetCarDetail = async (carId: string): Promise<MsCarResponse> => {
+export const GetCarDetail = async (
+  carId: string,
+  pickupDate: string,
+  returnDate: string
+): Promise<CarDetailResponse> => {
   try {
-    const response = await axios.get(baseApi + `/MsCar/${carId}`);
+    const response = await axios.get(
+      baseApi +
+        `/MsCar/${carId}?pickupDate=${pickupDate}&returnDate=${returnDate}`
+    );
+
+    console.log(response.data.data);
     return response.data.data;
   } catch (e: any) {
     throw new Error(
@@ -142,3 +155,4 @@ export const deleteCar = async (carId: string) => {
     );
   }
 };
+
