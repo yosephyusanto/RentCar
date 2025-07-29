@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import ManageCarPage from "./pages/employee/ManageCarPage";
+import PaymentPage from "./pages/PaymentPage";
 
 function App() {
   return (
@@ -24,6 +25,14 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path="history" element={<HistoryPage />} />
             <Route path="contact" element={<ContactPage />} />
+            <Route
+              path="payment/:rentalId"
+              element={
+                <ProtectedRoute requiredRole="customer">
+                  <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="employee/"

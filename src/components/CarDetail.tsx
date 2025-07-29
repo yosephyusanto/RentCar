@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { GetCarDetail } from "../services";
+import { createRentalService, GetCarDetail } from "../services";
 import Carousel from "./Carousel";
 import { baseImageApi } from "../constant";
-import type { MsCarResponse } from "../interfaces";
+import type { CreateRentalRequest, MsCarResponse } from "../interfaces";
 import NoImage from "../assets/no_image.jpg";
 import { useRental } from "@/contexts/RentalContext";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type CarDetailProps = {
   onClose: () => void;
@@ -25,6 +28,13 @@ const CarDetail = ({ carId, onClose, formatPrice }: CarDetailProps) => {
   };
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [rentalDays, setRentalDays] = useState<number>(0);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [req] = useState<CreateRentalRequest>({
+    carId: carId,
+    rentalDate: pickupDate,
+    returnDate: returnDate,
+  });
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -57,10 +67,32 @@ const CarDetail = ({ carId, onClose, formatPrice }: CarDetailProps) => {
     }
   };
 
-  const handleRent = () => {
+  const handleRent = async () => {
+    // check if user is logged in
+    if (!user) {
+      toast.error("Please login to rent a car");
+      onClose();
+      navigate("/login");
+      return;
+    }
     // validation if user login as customer
-    // if login go to payment page
-    // if not go to login page
+    const userRole =
+      user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    if (userRole !== "customer") {
+      toast.error("Only customers can rent cars");
+      return;
+    }
+
+    // call api
+    try {
+      const response = await createRentalService(req);
+      onClose();
+      // go to payment page
+      navigate(`/payment/${response.rentalId}`);
+    } catch (e: any) {
+      setError(e.message || "Something went wrong when trying to rent a car");
+    }
+
   };
 
   const formatDate = (dateString: string) => {

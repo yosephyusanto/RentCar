@@ -26,10 +26,10 @@ export interface MsCarPaginatedResponse {
   currentPage: number;
 }
 
-export interface CarDetailResponse{
-  car : MsCarResponse;
-  totalPrice : number;
-  rentalDays : number;
+export interface CarDetailResponse {
+  car: MsCarResponse;
+  totalPrice: number;
+  rentalDays: number;
 }
 
 export interface MsCarResponse {
@@ -54,3 +54,37 @@ export interface MsCarRequest {
   transmission: string;
   price_per_day: number;
 }
+
+// TrRental
+export interface CreateRentalRequest {
+  carId: string;
+  rentalDate: string;
+  returnDate: string;
+}
+
+export interface CreateRentalResponse{
+  rentalId : string;
+  message : string;
+  totalPrice : number;
+}
+
+export interface RentalHistoryResponse{
+  rentalId : string;
+  carName : string;
+  carModel : string;
+  carYear : number;
+  rentalDate : string;
+  returnDate : string;
+  totalDay : number;
+  totalPrice : number;
+  paymentStatus : boolean;
+}
+
+export interface TrRentalPaginatedResponse {
+  data: RentalHistoryResponse[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+}
+
+

@@ -2,9 +2,12 @@ import type { IFilter } from "@/pages/HomePage";
 import { baseApi } from "../constant";
 import type {
   CarDetailResponse,
+  CreateRentalRequest,
+  CreateRentalResponse,
   MsCarCardPaginatedResponse,
   MsCarPaginatedResponse,
   MsCarRequest,
+  TrRentalPaginatedResponse,
 } from "../interfaces";
 import axios from "axios";
 
@@ -156,3 +159,48 @@ export const deleteCar = async (carId: string) => {
   }
 };
 
+// TrRental
+export const createRentalService = async (
+  request: CreateRentalRequest
+): Promise<CreateRentalResponse> => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(baseApi + "/TrRental", request, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("create rental response data: ", response.data.data);
+    return response.data.data;
+  } catch (e: any) {
+    throw new Error(
+      e.response.data.message ||
+        "Something went wrong when trying to rent a car"
+    );
+  }
+};
+
+export const getUserRentalService =
+  async (): Promise<TrRentalPaginatedResponse> => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(baseApi + `/TrRental/my-rentals`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return {
+        data: response.data.data,
+        currentPage: response.data.currentPage,
+        totalItems: response.data.totalItems,
+        totalPages: response.data.totalPages,
+      };
+    } catch (e: any) {
+      throw new Error(
+        e.response.data.message || "Something went wrong when getting the data"
+      );
+    }
+  };

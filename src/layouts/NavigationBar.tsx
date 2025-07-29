@@ -137,13 +137,13 @@ const NavigationBar = () => {
               <>
                 {" "}
                 <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
-                  Home
+                  <Link to="/">Home</Link>
                 </li>
                 <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
-                  History
+                  <Link to="/history">History</Link>
                 </li>
                 <li className="list-none w-full text-center p-4 hover:bg-blue-600 hover:text-white transition-all cursor-pointer">
-                  Contact
+                  <Link to="/contact"> Contact</Link>
                 </li>
               </>
             )}
