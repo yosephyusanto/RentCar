@@ -182,10 +182,10 @@ export const createRentalService = async (
 };
 
 export const getUserRentalService =
-  async (): Promise<TrRentalPaginatedResponse> => {
+  async (page : number = 1, pageSize : number = 10): Promise<TrRentalPaginatedResponse> => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(baseApi + `/TrRental/my-rentals`, {
+      const response = await axios.get(baseApi + `/TrRental/my-rentals?page=${page}&limit=${pageSize}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

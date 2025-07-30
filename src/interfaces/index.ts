@@ -62,22 +62,23 @@ export interface CreateRentalRequest {
   returnDate: string;
 }
 
-export interface CreateRentalResponse{
-  rentalId : string;
-  message : string;
-  totalPrice : number;
+export interface CreateRentalResponse {
+  rentalId: string;
+  message: string;
+  totalPrice: number;
 }
 
-export interface RentalHistoryResponse{
-  rentalId : string;
-  carName : string;
-  carModel : string;
-  carYear : number;
-  rentalDate : string;
-  returnDate : string;
-  totalDay : number;
-  totalPrice : number;
-  paymentStatus : boolean;
+export interface RentalHistoryResponse {
+  rentalId: string;
+  carName: string;
+  carModel: string;
+  carYear: number;
+  rentalDate: string;
+  returnDate: string;
+  totalDay: number;
+  pricePerDay: number;
+  totalPrice: number;
+  paymentStatus: boolean;
 }
 
 export interface TrRentalPaginatedResponse {
@@ -86,5 +87,3 @@ export interface TrRentalPaginatedResponse {
   totalPages: number;
   currentPage: number;
 }
-
-
