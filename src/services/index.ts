@@ -65,10 +65,10 @@ export const GetCarDetail = async (
   }
 };
 
-export const GetManageCarData = async (): Promise<MsCarPaginatedResponse> => {
+export const GetManageCarData = async (page : number = 1, pageSize : number = 10): Promise<MsCarPaginatedResponse> => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(baseApi + "/MsCar/GetAllCompleteCarData", {
+    const response = await axios.get(baseApi + `/MsCar/GetAllCompleteCarData?page=${page}&pageSize=${pageSize}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -204,3 +204,26 @@ export const getUserRentalService =
       );
     }
   };
+
+export const processPaymentService = async (
+  rentalId: string,
+  paymentMethod: string
+) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(
+      baseApi + `/TrRental/${rentalId}/payment`,
+      JSON.stringify(paymentMethod),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data.data;
+  } catch (e: any) {
+    throw new Error(e.response.data.message || "Unexcpected problem");
+  }
+};

@@ -16,9 +16,17 @@ import DeleteConfirmModal from "@/components/DeleteConfirmModal";
 
 const ManageCarPage = () => {
   const [data, setData] = useState<MsCarResponse[]>([]);
+  // pagination
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [showUploadImagesModal, setShowUploadImagesModal] =
     useState<boolean>(false);
   const navigate = useNavigate();
+
   // state untuk image view modal
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
   const [selectedImages, setSelectedImages] = useState<MsCarImages[]>([]);
@@ -33,17 +41,36 @@ const ManageCarPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [currentPage, pageSize]);
 
   const fetchData = async () => {
     try {
-      const response: MsCarPaginatedResponse = await GetManageCarData();
+      setIsLoading(true);
+      const response: MsCarPaginatedResponse = await GetManageCarData(
+        currentPage,
+        pageSize
+      );
       console.log("Fetched car data:", response);
       setData(response.data);
+      setTotalItems(response.totalItems);
+      setTotalPages(response.totalPages);
+      setCurrentPage(response.currentPage);
     } catch (error) {
       console.error("Error fetching car data:", error);
+      toast.error("Failed to fetch car data");
+    }finally{
+      setIsLoading(false);
     }
   };
+
+  const handlePaginationChange = (page: number, newPageSize ?: number) => {
+    if(newPageSize && newPageSize !== pageSize){
+      setPageSize(newPageSize);
+      setCurrentPage(1); // kembali ke halaman 1 jika pageSize berubah
+    }else{
+      setCurrentPage(page);
+    }
+  }
 
   const handleUploadImagesModal = () => {
     setShowUploadImagesModal(!showUploadImagesModal);
@@ -165,7 +192,15 @@ const ManageCarPage = () => {
 
       {/* Table */}
       <div className="container mx-auto py-10">
-        <DataTable columns={manageMsCarColumns} data={data} />
+        <DataTable 
+          columns={manageMsCarColumns} 
+          data={data}
+          totalItems={totalItems}
+          totalPages={totalPages}
+          currentPage={currentPage}
+          pageSize={pageSize}
+          isLoading={isLoading}
+          onPaginationChange={handlePaginationChange} />
       </div>
     </div>
   );
