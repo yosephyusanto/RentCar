@@ -5,20 +5,18 @@ import { formatDate } from "@/utils/FormatDate";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export interface RentalHistoryColumnsProp {
-  onPayment: () => void;
-  onSeeDetailTransaction: () => void;
+  onPayment: (rentalId : string) => void
 }
 
 export const createRentalHistoryColumns = ({
   onPayment,
-  onSeeDetailTransaction,
 }: RentalHistoryColumnsProp): ColumnDef<RentalHistoryResponse>[] => [
   {
     accessorKey: "rentalDate",
     header: "Rental Date",
     cell: ({ row }) => {
       const rentalDate: string = row.getValue("rentalDate");
-        const returnDate: string = row.original.returnDate;
+      const returnDate: string = row.original.returnDate;
       return (
         <div>
           {formatDate(rentalDate)} - {formatDate(returnDate)}
@@ -38,14 +36,14 @@ export const createRentalHistoryColumns = ({
   {
     accessorKey: "pricePerDay",
     header: "Rent Price per Day ",
-    cell : ({row}) => {
+    cell: ({ row }) => {
       const price = parseFloat(row.getValue("pricePerDay"));
       const formatted = new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
       }).format(price);
       return <div className="font-medium">{formatted}</div>;
-    }
+    },
   },
   {
     accessorKey: "totalDay",
@@ -54,14 +52,14 @@ export const createRentalHistoryColumns = ({
   {
     accessorKey: "totalPrice",
     header: "Total Price",
-    cell : ({row}) => {
+    cell: ({ row }) => {
       const price = parseFloat(row.getValue("totalPrice"));
       const formatted = new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
       }).format(price);
       return <div className="font-medium">{formatted}</div>;
-    }
+    },
   },
   {
     accessorKey: "paymentStatus",
@@ -83,27 +81,19 @@ export const createRentalHistoryColumns = ({
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-       const status = row.getValue("paymentStatus") as boolean;
-
+      const status = row.getValue("paymentStatus") as boolean;
+      const rentalId : string = row.original.rentalId;
       return (
         <div className="flex items-center gap-x-2">
-        {status ? (
-          <button
-            className="text-blue-600 underline"
-            onClick={onSeeDetailTransaction}
-            type="button"
-          >
-            See Details
-          </button>
-        ) : (
-          <button
-            className="bg-blue-500 text-white px-3 py-1 rounded"
-            onClick={onPayment}
-            type="button"
-          >
-            Pay
-          </button>
-        )}
+          {status === false && (
+            <button
+              className="bg-blue-500 text-white px-3 py-1 rounded"
+              onClick={() => onPayment(rentalId)}
+              type="button"
+            >
+              Pay
+            </button>
+          )}
         </div>
       );
     },

@@ -87,3 +87,26 @@ export interface TrRentalPaginatedResponse {
   totalPages: number;
   currentPage: number;
 }
+
+export interface PaymentRequest {
+  paymentMethod: string;
+}
+
+export interface PaymentResponse {
+  message: string;
+  paymentId?: string;
+  totalAmount?: number;
+}
+
+export interface RentalDetailForPayment {
+  rentalId: string;
+  carName: string;
+  carModel: string;
+  carYear: number;
+  rentalDate: string;
+  returnDate: string;
+  totalDay: number;
+  pricePerDay: number;
+  totalPrice: number;
+  paymentStatus: boolean;
+}
