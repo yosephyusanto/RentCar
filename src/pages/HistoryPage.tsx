@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DataTable } from "./employee/DataTable";
 import { getUserRentalService } from "@/services";
 import type { RentalHistoryResponse } from "@/interfaces";
