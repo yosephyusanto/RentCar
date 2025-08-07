@@ -65,15 +65,22 @@ export const GetCarDetail = async (
   }
 };
 
-export const GetManageCarData = async (page : number = 1, pageSize : number = 10): Promise<MsCarPaginatedResponse> => {
+export const GetManageCarData = async (
+  page: number = 1,
+  pageSize: number = 10
+): Promise<MsCarPaginatedResponse> => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(baseApi + `/MsCar/GetAllCompleteCarData?page=${page}&pageSize=${pageSize}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.get(
+      baseApi +
+        `/MsCar/GetAllCompleteCarData?page=${page}&pageSize=${pageSize}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return {
       data: response.data.data,
       totalItems: response.data.totalItems,
@@ -181,29 +188,34 @@ export const createRentalService = async (
   }
 };
 
-export const getUserRentalService =
-  async (page : number = 1, pageSize : number = 10): Promise<TrRentalPaginatedResponse> => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(baseApi + `/TrRental/my-rentals?page=${page}&limit=${pageSize}`, {
+export const getUserRentalService = async (
+  page: number = 1,
+  pageSize: number = 10
+): Promise<TrRentalPaginatedResponse> => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      baseApi + `/TrRental/my-rentals?page=${page}&limit=${pageSize}`,
+      {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      });
+      }
+    );
 
-      return {
-        data: response.data.data,
-        currentPage: response.data.currentPage,
-        totalItems: response.data.totalItems,
-        totalPages: response.data.totalPages,
-      };
-    } catch (e: any) {
-      throw new Error(
-        e.response.data.message || "Something went wrong when getting the data"
-      );
-    }
-  };
+    return {
+      data: response.data.data,
+      currentPage: response.data.currentPage,
+      totalItems: response.data.totalItems,
+      totalPages: response.data.totalPages,
+    };
+  } catch (e: any) {
+    throw new Error(
+      e.response.data.message || "Something went wrong when getting the data"
+    );
+  }
+};
 
 export const processPaymentService = async (
   rentalId: string,

@@ -23,7 +23,7 @@ const HistoryPage = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await getUserRentalService();
+      const response = await getUserRentalService(currentPage, pageSize);
 
       setData(response.data);
       setTotalItems(response.totalItems);

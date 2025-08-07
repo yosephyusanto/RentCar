@@ -53,18 +53,19 @@ export function DataTable<TData, TValue>({
   // page size option
   const pageSizeOptions = [10, 20, 30, 40, 50];
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
+          <span className="text-gray-600">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-8">
-          <div className="flex items-center space-x-2">
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
-            <span className="text-gray-600">Loading...</span>
-          </div>
-        </div>
-      )}
-
       {/* Data Table */}
       <div className="rounded-md border">
         <Table>
