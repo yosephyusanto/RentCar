@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { createRentalService, GetCarDetail } from "../services";
 import Carousel from "./Carousel";
-import { baseImageApi } from "../constant";
 import type { CreateRentalRequest, MsCarResponse } from "../interfaces";
 import NoImage from "../assets/no_image.jpg";
 import { useRental } from "@/contexts/RentalContext";
@@ -55,7 +54,7 @@ const CarDetail = ({ carId, onClose, formatPrice }: CarDetailProps) => {
     try {
       const response = await GetCarDetail(carId, pickupDate, returnDate);
       const images = response.car.images.map(
-        (image) => `${baseImageApi + image.image_link}`
+        (image) => image.image_link
       );
 
       setSlides(images);

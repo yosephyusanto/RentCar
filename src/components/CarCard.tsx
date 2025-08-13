@@ -1,5 +1,4 @@
 import type { MsCarCardResponse } from "../interfaces";
-import { baseImageApi } from "../constant";
 import NoImage from "../assets/no_image.jpg";
 import { useState } from "react";
 import CarDetail from "./CarDetail";
@@ -10,7 +9,7 @@ type CarCardProps = {
 
 const CarCard = ({ data }: CarCardProps) => {
   const [showModal, setShowModal] = useState<boolean>(false);
-  const imageUrl = data.imageLink ? baseImageApi + data.imageLink : null;
+  const imageUrl = data.imageLink 
   const formatPrice = (price: number) => {
     return price.toLocaleString("id-ID");
   };

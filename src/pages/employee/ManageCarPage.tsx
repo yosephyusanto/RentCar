@@ -9,7 +9,6 @@ import type {
   MsCarResponse,
 } from "@/interfaces";
 import ImageViewModal from "@/components/ImageViewModal";
-import { baseImageApi } from "@/constant";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal";
@@ -58,19 +57,19 @@ const ManageCarPage = () => {
     } catch (error) {
       console.error("Error fetching car data:", error);
       toast.error("Failed to fetch car data");
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
 
-  const handlePaginationChange = (page: number, newPageSize ?: number) => {
-    if(newPageSize && newPageSize !== pageSize){
+  const handlePaginationChange = (page: number, newPageSize?: number) => {
+    if (newPageSize && newPageSize !== pageSize) {
       setPageSize(newPageSize);
       setCurrentPage(1); // kembali ke halaman 1 jika pageSize berubah
-    }else{
+    } else {
       setCurrentPage(page);
     }
-  }
+  };
 
   const handleUploadImagesModal = () => {
     setShowUploadImagesModal(!showUploadImagesModal);
@@ -81,7 +80,7 @@ const ManageCarPage = () => {
     // Transform images to include full URL
     const imagesWithFullUrl = images.map((image) => ({
       ...image,
-      image_link: `${baseImageApi}${image.image_link}`,
+      image_link: image.image_link,
     }));
 
     setSelectedImages(imagesWithFullUrl);
@@ -192,15 +191,16 @@ const ManageCarPage = () => {
 
       {/* Table */}
       <div className="container mx-auto py-10">
-        <DataTable 
-          columns={manageMsCarColumns} 
+        <DataTable
+          columns={manageMsCarColumns}
           data={data}
           totalItems={totalItems}
           totalPages={totalPages}
           currentPage={currentPage}
           pageSize={pageSize}
           isLoading={isLoading}
-          onPaginationChange={handlePaginationChange} />
+          onPaginationChange={handlePaginationChange}
+        />
       </div>
     </div>
   );
