@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { AssignRoleRequest, RegisterRequest } from "../interfaces/auth";
 import { assignRole, registerApi } from "../services/auth";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { FaSpinner } from "react-icons/fa6";
 
 const RegisterPage = () => {
